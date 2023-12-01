@@ -20,9 +20,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Copy .env file
-        run: cp $GITHUB_WORKSPACE/.env .
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -32,8 +29,3 @@ jobs:
         run: |
           docker build -t bookverse .
           docker run -p 8080:8080 bookverse
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          RABBIT_URL: ${{ secrets.RABBIT_URL }}
-          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
