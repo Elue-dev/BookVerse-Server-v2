@@ -1,4 +1,4 @@
-name: Your Workflow Name
+name: BookVerse CI/CD
 
 on:
   push:
@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Copy .env file
+        run: cp $GITHUB_WORKSPACE/.env .
 
       - name: Set up Go
         uses: actions/setup-go@v2
