@@ -14,9 +14,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: List files in the directory
-        run: ls -R
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
