@@ -14,12 +14,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: List files in the directory
+        run: ls -R
+
       - name: Load env
         id: load-env
         shell: bash
-        env:
-          ENV_FILE: .env
-        run: cat ${{ env.ENV_FILE }} >> $GITHUB_ENV
+        run: cat .env >> $GITHUB_ENV
 
       - name: Set up Go
         uses: actions/setup-go@v2
