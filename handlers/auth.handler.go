@@ -115,3 +115,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func CheckAuthStatus(w http.ResponseWriter, r *http.Request) {
+	_, err := helpers.GetTokenFromHeaders(r)
+
+	if err != nil {
+		helpers.SendErrorResponse(w, http.StatusUnauthorized, "you are not authoried", err.Error())
+
+	}
+
+	helpers.SendErrorResponse(w, http.StatusOK, "token is still valid", "token is valid")
+}
