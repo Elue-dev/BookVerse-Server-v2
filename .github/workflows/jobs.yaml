@@ -10,15 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      DB_URL: ${{ secrets.DB_URL }}
-      RABBIT_URL: ${{ secrets.RABBIT_URL }}
-      CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Load env
+        id: load-env
+        shell: bash
+        env:
+          ENV_FILE: .env
+        run: cat ${{ env.ENV_FILE }} >> $GITHUB_ENV
 
       - name: Set up Go
         uses: actions/setup-go@v2
