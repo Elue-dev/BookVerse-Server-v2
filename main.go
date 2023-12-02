@@ -25,7 +25,7 @@ func main() {
 
 	r := router.Router()
 
-	allowedOrigins := handlers.AllowedOrigins([]string{"http://localhost:5173", "https://bookverse.vercel.app"})
+	allowedOrigins := handlers.AllowedOrigins([]string{"http://localhost:5173", "https://bookversev2.vercel.app"})
 
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
 	allowedHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
