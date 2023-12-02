@@ -12,9 +12,10 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
+	if _, exists := os.LookupEnv("RAILWAY_ENVIRONMENT"); !exists {
+		if err := godotenv.Load(); err != nil {
+			log.Fatal("error loading .env file:", err)
+		}
 	}
 
 	PORT := os.Getenv("PORT")
