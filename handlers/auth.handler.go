@@ -196,6 +196,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload models.ResetPayload
 	token := mux.Vars(r)["token"]
 	userId := mux.Vars(r)["userId"]
+	queueName := "resett_password_queue"
 
 	json.NewDecoder(r.Body).Decode(&payload)
 
@@ -232,7 +233,11 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	currUser, _ := controllers.GetUser(result.UserId, "")
+
 	_ = controllers.RemoveToken(result.ID)
+
+	_ = rabbitmq.SendToRabbitMQ(currUser.Email, currUser.Username, result.ID, "", queueName)
 
 	helpers.SendSuccessResponse(w, http.StatusOK, "Password has been successfully reset")
 }
