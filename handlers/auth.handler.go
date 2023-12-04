@@ -232,5 +232,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_ = controllers.RemoveToken(result.ID)
+
 	helpers.SendSuccessResponse(w, http.StatusOK, "Password has been successfully reset")
 }

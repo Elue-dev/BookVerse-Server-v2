@@ -41,7 +41,7 @@ func GetToken(userId string) (models.Token, error) {
 
 	var token models.Token
 
-	sqlQuery := "SELECT * FROM tokens WHERE userid = $1"
+	sqlQuery := "SELECT * FROM tokens WHERE userid = $1 ORDER BY createdat DESC LIMIT 1"
 
 	rows := db.QueryRow(sqlQuery, userId)
 
@@ -68,4 +68,23 @@ func GetToken(userId string) (models.Token, error) {
 	}
 
 	return token, nil
+}
+
+func RemoveToken(tokenId string) error {
+	db := connections.CeateConnection()
+	defer db.Close()
+
+	sqlQuery := "DELETE FROM tokens WHERE id = $1"
+
+	res, err := db.Exec(sqlQuery, tokenId)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	_, err = res.RowsAffected()
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	return nil
 }
