@@ -131,7 +131,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	currUser, err := controllers.GetUser(randomUUID, payload.Email)
 	if err != nil {
-		helpers.SendErrorResponse(w, http.StatusNotFound, "could not find user", err.Error())
+		helpers.SendErrorResponse(w, http.StatusNotFound, "Could not find user. Has this user been registered?", err.Error())
 		return
 	}
 
@@ -196,7 +196,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload models.ResetPayload
 	token := mux.Vars(r)["token"]
 	userId := mux.Vars(r)["userId"]
-	queueName := "RESET_PASSWORD_QUEUE"
+	queueName := "RESET_PWORD_QUEUE"
 
 	json.NewDecoder(r.Body).Decode(&payload)
 
