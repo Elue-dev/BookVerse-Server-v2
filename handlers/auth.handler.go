@@ -183,16 +183,6 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Message sent to RabbitMQ successfully")
 	}()
 
-	// queueMsg := <-responseChannel
-	// fmt.Println("queueMsg", queueMsg)
-
-	// if !queueMsg.Success {
-	// 	helpers.SendErrorResponse(w, http.StatusInternalServerError, "something went wrong", fmt.Sprintf("could not send email to %v", payload.Email))
-	// 	return
-	// }
-
-	// helpers.SendSuccessResponse(w, http.StatusOK, fmt.Sprintf("An email has been sent to %v with instructions to reset password", payload.Email))
-
 	select {
 	case queueMsg := <-responseChannel:
 		if !queueMsg.Success {
