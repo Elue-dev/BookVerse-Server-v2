@@ -190,7 +190,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case <-time.After(5 * time.Second):
-		helpers.SendErrorResponse(w, http.StatusInternalServerError, "timeout", "timed out while waiting for the response")
+		helpers.SendErrorResponse(w, http.StatusInternalServerError, "A network timeout occured. If you did not recieve the email, please try again.", "timed out while waiting for the response. please try again")
 		return
 	}
 }
