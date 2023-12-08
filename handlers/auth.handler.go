@@ -175,21 +175,34 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	}()
 
-	err = rabbitmq.SendToRabbitMQ(payload.Email, currUser.Username, currUser.ID, token, queueName)
-	if err != nil {
-		helpers.SendErrorResponse(w, http.StatusUnauthorized, "could not send message to queue", err.Error())
+	go func() {
+		err := rabbitmq.SendToRabbitMQ(payload.Email, currUser.Username, currUser.ID, token, queueName)
+		if err != nil {
+			fmt.Println("Error sending message to RabbitMQ:", err)
+		}
+		fmt.Println("Message sent to RabbitMQ successfully")
+	}()
+
+	// queueMsg := <-responseChannel
+	// fmt.Println("queueMsg", queueMsg)
+
+	// if !queueMsg.Success {
+	// 	helpers.SendErrorResponse(w, http.StatusInternalServerError, "something went wrong", fmt.Sprintf("could not send email to %v", payload.Email))
+	// 	return
+	// }
+
+	// helpers.SendSuccessResponse(w, http.StatusOK, fmt.Sprintf("An email has been sent to %v with instructions to reset password", payload.Email))
+
+	select {
+	case queueMsg := <-responseChannel:
+		if !queueMsg.Success {
+			helpers.SendErrorResponse(w, http.StatusInternalServerError, "something went wrong", fmt.Sprintf("could not send email to %v", payload.Email))
+			return
+		}
+	case <-time.After(5 * time.Second):
+		helpers.SendErrorResponse(w, http.StatusInternalServerError, "timeout", "timed out while waiting for the response")
 		return
 	}
-
-	queueMsg := <-responseChannel
-	fmt.Println("queueMsg", queueMsg)
-
-	if !queueMsg.Success {
-		helpers.SendErrorResponse(w, http.StatusInternalServerError, "something went wrong", fmt.Sprintf("could not send email to %v", payload.Email))
-		return
-	}
-
-	helpers.SendSuccessResponse(w, http.StatusOK, fmt.Sprintf("An email has been sent to %v with instructions to reset password", payload.Email))
 }
 
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
