@@ -31,6 +31,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	user.Email = r.FormValue("email")
 	user.Password = r.FormValue("password")
 
+	existingUser, _ := controllers.GetUser(uuid.New().String(), user.Email)
+
+	if existingUser.ID != "" {
+		helpers.SendErrorResponse(w, http.StatusBadRequest, "A user with this Email already exists.", fmt.Sprintf("a user with the Email: %v already exists.", existingUser.Email))
+		return
+	}
+
 	if isValidated := helpers.ValidateSignUpFields(user.Username, user.Email, user.Password); !isValidated {
 		helpers.SendErrorResponse(w, http.StatusBadRequest, "Please provide username, email and password", nil)
 		return
