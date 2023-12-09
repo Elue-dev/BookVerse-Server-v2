@@ -130,9 +130,6 @@ func GetBook(bookSlug, bookId string) (models.BookWithUsernameAndAvatar, error) 
 
 	rows := db.QueryRow(sqlQuery, bookSlug, bookId)
 
-	var createdAt pq.NullTime
-	var updatedAt pq.NullTime
-
 	err = rows.Scan(
 		&book.ID,
 		&book.Title,
@@ -142,8 +139,8 @@ func GetBook(bookSlug, bookId string) (models.BookWithUsernameAndAvatar, error) 
 		&book.UserId,
 		&book.Slug,
 		&book.Category,
-		&createdAt,
-		&updatedAt,
+		&book.CreatedAt,
+		&book.UpdatedAt,
 		&book.Username,
 		&book.UserAvatar,
 	)
@@ -160,14 +157,6 @@ func GetBook(bookSlug, bookId string) (models.BookWithUsernameAndAvatar, error) 
 				return book, fmt.Errorf("book with slug of %v could not be found", bookSlug)
 			}
 		}
-	}
-
-	if createdAt.Valid {
-		book.CreatedAt = createdAt.Time.Format("2006-01-02T15:04:05Z07:00")
-	}
-
-	if updatedAt.Valid {
-		book.UpdatedAt = updatedAt.Time.Format("2006-01-02T15:04:05Z07:00")
 	}
 
 	return book, nil
