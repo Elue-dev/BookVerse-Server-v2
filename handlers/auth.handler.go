@@ -33,7 +33,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	existingUser, _ := controllers.GetUser(uuid.New().String(), user.Email)
 
-	if existingUser.ID != "" {
+	if helpers.IsNotEmpty(existingUser) {
 		helpers.SendErrorResponse(w, http.StatusBadRequest, "A user with this Email already exists.", fmt.Sprintf("a user with the Email: %v already exists.", existingUser.Email))
 		return
 	}
@@ -126,7 +126,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var payload Payload
-	queueName := "FORGOT_PASSWORD_QUEUE"
+	queueName := "FP_QUEUE"
 	randomUUID := uuid.New().String()
 
 	json.NewDecoder(r.Body).Decode(&payload)
@@ -206,7 +206,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	var payload models.ResetPayload
 	token := mux.Vars(r)["token"]
 	userId := mux.Vars(r)["userId"]
-	queueName := "RESET_PWORD_QUEUE"
+	queueName := "RP_QUEUE"
 
 	json.NewDecoder(r.Body).Decode(&payload)
 
@@ -247,7 +247,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	_ = controllers.RemoveToken(result.ID)
 
-	_ = rabbitmq.SendMessageToQueue(currUser.Email, currUser.Username, result.ID, "", queueName)
+	_ = rabbitmq.SendMessageToQueue(currUser.Email, currUser.Username, result.ID, "token", queueName)
 
 	helpers.SendSuccessResponse(w, http.StatusOK, "Password has been successfully reset")
 }
