@@ -78,8 +78,6 @@ func GetBooks() ([]models.BookWithUsername, error) {
 
 	for rows.Next() {
 		var book models.BookWithUsername
-		var createdAt pq.NullTime
-		var updatedAt pq.NullTime
 		err = rows.Scan(
 			&book.ID,
 			&book.Title,
@@ -89,20 +87,13 @@ func GetBooks() ([]models.BookWithUsername, error) {
 			&book.UserId,
 			&book.Slug,
 			&book.Category,
-			&createdAt,
-			&updatedAt,
+			&book.CreatedAt,
+			&book.UpdatedAt,
 			&book.Username,
 		)
+
 		if err != nil {
 			return books, err
-		}
-
-		if createdAt.Valid {
-			book.CreatedAt = createdAt.Time.Format("2006-01-02T15:04:05Z07:00")
-		}
-
-		if updatedAt.Valid {
-			book.UpdatedAt = updatedAt.Time.Format("2006-01-02T15:04:05Z07:00")
 		}
 
 		books = append(books, book)
@@ -229,8 +220,6 @@ func GetUserBooks(userId string) ([]models.Book, error) {
 
 	for rows.Next() {
 		var book models.Book
-		var createdAt pq.NullTime
-		var updatedAt pq.NullTime
 		err = rows.Scan(
 			&book.ID,
 			&book.Title,
@@ -240,19 +229,11 @@ func GetUserBooks(userId string) ([]models.Book, error) {
 			&book.UserId,
 			&book.Slug,
 			&book.Category,
-			&createdAt,
-			&updatedAt,
+			&book.CreatedAt,
+			&book.UpdatedAt,
 		)
 		if err != nil {
 			return books, err
-		}
-
-		if createdAt.Valid {
-			book.CreatedAt = createdAt.Time.Format("2006-01-02T15:04:05Z07:00")
-		}
-
-		if updatedAt.Valid {
-			book.UpdatedAt = updatedAt.Time.Format("2006-01-02T15:04:05Z07:00")
 		}
 
 		books = append(books, book)
