@@ -68,7 +68,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		callback := func(queueMsg models.QueueMessage) {
 			fmt.Printf("Received from queue: %+v\n", queueMsg)
 		}
-		rabbitmq.ConsumeFromRabbitMQ("welcome_user_queue", callback)
+		rabbitmq.ConsumeMessageFromQueue("WELCOME_USER_QUEUE", callback)
 	}()
 }
 
@@ -171,12 +171,12 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 			responseChannel <- queueMsg
 		}
 
-		rabbitmq.ConsumeFromRabbitMQ(queueName, queueMessageHandlerCallback)
+		rabbitmq.ConsumeMessageFromQueue(queueName, queueMessageHandlerCallback)
 
 	}()
 
 	go func() {
-		err := rabbitmq.SendToRabbitMQ(payload.Email, currUser.Username, currUser.ID, token, queueName)
+		err := rabbitmq.SendMessageToQueue(payload.Email, currUser.Username, currUser.ID, token, queueName)
 		if err != nil {
 			fmt.Println("Error sending message to RabbitMQ:", err)
 		}
@@ -240,7 +240,7 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	_ = controllers.RemoveToken(result.ID)
 
-	_ = rabbitmq.SendToRabbitMQ(currUser.Email, currUser.Username, result.ID, "", queueName)
+	_ = rabbitmq.SendMessageToQueue(currUser.Email, currUser.Username, result.ID, "", queueName)
 
 	helpers.SendSuccessResponse(w, http.StatusOK, "Password has been successfully reset")
 }
